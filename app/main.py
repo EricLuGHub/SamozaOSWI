@@ -4,85 +4,21 @@ from typing import List, Dict, Any
 
 app = FastAPI(title="SamozaOS Dummy Kernel")
 # Pydantic models
-class Badge(BaseModel):
-    badge_id: str
-    badge_name: str
-    badge_type: str
-    validity: bool
-    creation_time: str
-    is_ephemeral: bool
-    validity_time: str
 
-class Credential(BaseModel):
-    access_token: str
-    refresh_token: str
-    provider: str
-    badge_id: str
-    token_id: str
+
+
 
 class SAPEntry(BaseModel):
     id: str
     badge_id: str
     ceio_permissions: List[str]
-# Services
-class GuardService:
-    def __init__(self):
-        self.sap_matrix: Dict[str, List[str]] = {}
-    def load_permissions(self, manifest_path: str):
-        # TODO: load YAML manifest into sap_matrix
-        pass
-    def verify_permission(self, badge_id: str, permission: str) -> bool:
-        return permission in self.sap_matrix.get(badge_id, [])
-
-class AuthService:
-    def __init__(self):
-        self.badges: Dict[str, Badge] = {}
-        self.credentials: Dict[str, Credential] = {}
-        self.sap_store: Dict[str, SAPEntry] = {}
-    def create_badge(self, badge: Badge) -> Badge:
-        self.badges[badge.badge_id] = badge
-        return badge
-    def refresh_token(self, token_id: str) -> Credential:
-        cred = self.credentials.get(token_id)
-        if not cred:
-            raise HTTPException(status_code=404, detail="Token not found")
-        # TODO: implement actual refresh logic
-        return cred
-
-class WorldInterfaceService:
-    def __init__(self, guard: GuardService, auth_service: AuthService):
-        self.guard = guard
-        self.auth_service = auth_service
-        self.connector_registry: Dict[str, Any] = {}
-    def register_connector(self, name: str, connector: Any):
-        self.connector_registry[name] = connector
-    def perform_action(self, badge_id: str, connector_name: str, action: str, payload: Any):
-        if not self.guard.verify_permission(badge_id, action):
-            raise HTTPException(status_code=403, detail="Permission denied")
-        connector = self.connector_registry.get(connector_name)
-        if not connector:
-            raise HTTPException(status_code=404, detail="Connector not found")
-        return connector.execute(action, payload)
-
-class SamozaEphemeralPoolService:
-    def __init__(self):
-        self.pool: Dict[str, List[Dict[str, str]]] = {}
-    def get_pool(self, provider: str) -> List[Dict[str, str]]:
-        return self.pool.get(provider, [])
-    def allocate(self, provider: str) -> Dict[str, str]:
-        return self.pool[provider].pop()
-    def release(self, provider: str, creds: Dict[str, str]):
-        self.pool[provider].append(creds)
 
 guard = GuardService()
 auth_service = AuthService()
 wis = WorldInterfaceService(guard, auth_service)
 seps = SamozaEphemeralPoolService()
 
-
-
-# Introduction
-@app.get("/introduction")
+@app.get("/")
 async def introduction():
     return {"description": "SamozaOS dummy kernel implemented as a FastAPI service. Supports badge-based access control, connector orchestration, and ephemeral account management."}
 
