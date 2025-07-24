@@ -1,6 +1,8 @@
 from http.client import HTTPException
 from typing import Dict, Any
 
+from app.services.guard_service import GuardService
+
 
 class WorldInterfaceService:
     def __init__(self, guard: GuardService, auth_service: AuthService):
