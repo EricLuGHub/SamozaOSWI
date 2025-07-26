@@ -1,46 +1,14 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.dependencies import get_auth_service
 from app.services import auth_service
+from app.services.auth_service import AuthService
 
 components_router = APIRouter(prefix="/components", tags=["components"])
 
 @components_router.get("/badges")
-async def get_badges():
-    return list(auth_service.badges.values())
+async def get_badges(svc: AuthService = Depends(get_auth_service)):
+    return list(svc.badges.values())
 
-@components_router.get("/guard")
-async def get_guard_status():
-    return {"sap_matrix": guard.sap_matrix}
 
-@components_router.get("/connectors")
-async def list_connectors():
-    return list(wis.connector_registry.keys())
 
-@components_router.get("/world-interface-service")
-async def get_wis_status():
-    return {"connectors": list(wis.connector_registry.keys())}
-
-@components_router.get("/auth-service")
-async def get_auth_status():
-    return {"badges": len(auth_service.badges), "credentials": len(auth_service.credentials)}
-
-@components_router.post("/connectors/add")
-async def add_connector(name: str):
-    wis.register_connector(name, object())
-    return {"status": f"connector {name} added"}
-
-@components_router.post("/badges/create", response_model=Badge)
-async def create_badge(badge: Badge):
-    return auth_service.create_badge(badge)
-
-@components_router.post("/tokens/refresh")
-async def refresh_token(token_id: str):
-    return auth_service.refresh_token(token_id)
-
-@components_router.delete("/lifecycle/discard/{token_id}")
-async def discard_ephemeral(token_id: str):
-    cred = auth_service.credentials.pop(token_id, None)
-    if not cred:
-        raise HTTPException(status_code=404, detail="Credential not found")
-    # TODO: notify WIS and SEPS
-    return {"status": "discarded"}
