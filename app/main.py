@@ -1,17 +1,34 @@
+from contextlib import asynccontextmanager
+from starlette.datastructures import State
+
 from fastapi import FastAPI
+from .config import Settings
+from .services import auth_service, guard_service, wis_service
+from .routers import badge_router
 
-app = FastAPI(title="SamozaOS Dummy Kernel")
-# Pydantic models
 
-guard = GuardService()
-auth_service = AuthService()
-wis = WorldInterfaceService(guard, auth_service)
-seps = SamozaEphemeralPoolService()
 
-@app.get("/")
-async def introduction():
-    return {"description": "SamozaOS dummy kernel implemented as a FastAPI service. Supports badge-based access control, connector orchestration, and ephemeral account management."}
+settings = Settings()
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8122)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.settings = settings
+    # app.state.auth = auth_service.AuthService()
+    # app.state.guard = guard_service.GuardService()
+
+
+    #startup flow
+    # initialize db connection here
+
+    yield
+    # shut down logic here
+    # close db
+
+app = FastAPI(
+    title="SamozaOS World Interface",
+    lifespan=lifespan,
+)
+
+from .routers import badge_router
+
+app.include_router(badge_router.router, prefix="/badge", tags=["auth"])

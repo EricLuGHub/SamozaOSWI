@@ -1,3 +1,6 @@
+from typing import List, Dict
+
+
 class SamozaEphemeralPoolService:
     def __init__(self):
         self.pool: Dict[str, List[Dict[str, str]]] = {}
