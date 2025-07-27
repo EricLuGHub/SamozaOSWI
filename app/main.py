@@ -1,19 +1,14 @@
 from contextlib import asynccontextmanager
-from starlette.datastructures import State
 
 from fastapi import FastAPI
-from .config import Settings
-from .services import auth_service, guard_service, wis_service
-from .routers import badge_router
-
-
+from app.config import Settings
 
 settings = Settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.settings = settings
-    # app.state.auth = auth_service.AuthService()
+    # app.state.composio =
     # app.state.guard = guard_service.GuardService()
 
 
@@ -31,4 +26,18 @@ app = FastAPI(
 
 from .routers import badge_router
 
-app.include_router(badge_router.router, prefix="/badge", tags=["auth"])
+app.include_router(badge_router.badge_router, prefix="/badge", tags=["auth"])
+
+@app.get("/")
+async def root():
+    return {"message": "Hello"}
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "app.main:app",
+        host=settings.host,
+        port=settings.port,
+        reload=True,
+    )

@@ -1,9 +1,10 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     db_url: str
-    host: str = "127.0.0.1"
-    port: int = 8122
-
-    class Config:
-        env_file = ".env"
+    host: str
+    port: int
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore"
+    )

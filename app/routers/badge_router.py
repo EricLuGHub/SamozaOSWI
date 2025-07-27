@@ -1,14 +1,22 @@
 from fastapi import APIRouter, Depends
 
-from app.dependencies import get_auth_service
+from app.dependencies import get_auth_service, get_badge_service
 from app.services import auth_service
 from app.services.auth_service import AuthService
 
-components_router = APIRouter(prefix="/components", tags=["components"])
+badge_router = APIRouter(prefix="/components", tags=["components"])
 
-@components_router.get("/badges")
-async def get_badges(svc: AuthService = Depends(get_auth_service)):
+@badge_router.get("/badges")
+async def get_badges(svc: AuthService = Depends(get_badge_service)):
     return list(svc.badges.values())
+
+@badge_router.post("/create-badge")
+async def create_badge(badge_id: str, svc: AuthService = Depends(get_badge_service)):
+    if badge_id in svc.badges:
+        return {"error": "Badge already exists"}
+    svc.create_badge(badge_id)
+    return {"message": "Badge created successfully", "badge_id": badge_id}
+
 
 
 
