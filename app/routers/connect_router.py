@@ -17,7 +17,8 @@ async def connector_execute(req : ConnectorExecuteRequest, wis : WorldInterfaceS
     return
 
 @connector_router.post("/authorize")
-async def connector_authorize(req : ConnectorAuthorizeRequest):
+async def connector_authorize(req : ConnectorAuthorizeRequest, wis : WorldInterfaceService = Depends(get_wis_service)):
     # todo ::: should not be this, should only pass the connector name
+    res = wis.auth_connector(req)
 
     pass
