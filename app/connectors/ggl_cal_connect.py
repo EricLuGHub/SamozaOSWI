@@ -2,9 +2,9 @@ from app.connectors.Connectable import BaseConnector
 
 
 class GoogleCalendarConnector(BaseConnector):
-    def __init__(self):
-        # get from db or set none
-        self.credentials = None
+    def __init__(self, api_key: str, entity_id: str, token: str = None):
+        super().__init__(api_key, entity_id)
+        self.connector_name = "GoogleCalendarConnector"
 
 
     def execute(self, action: str, payload: object) -> dict:

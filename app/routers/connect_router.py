@@ -13,11 +13,8 @@ async def connector_status():
 
 @connector_router.post("/execute")
 async def connector_execute(req : ConnectorExecuteRequest, wis : WorldInterfaceService = Depends(get_wis_service)):
-
-    wis.connector_execute(req)
-
-
-    pass
+    res = wis.connector_execute(req)
+    return
 
 @connector_router.post("/authorize")
 async def connector_authorize(req : ConnectorAuthorizeRequest):

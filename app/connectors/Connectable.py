@@ -2,7 +2,14 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 
-class BaseConnector(ABC):
+class BaseConnector:
+    connector_name: str
+    api_key: str
+    entity_id: str
+
+    def __init__(self, api_key: str, entity_id: str):
+        self.api_key = api_key
+        self.entity_id = entity_id
 
     @abstractmethod
     def authenticate(self) -> bool:

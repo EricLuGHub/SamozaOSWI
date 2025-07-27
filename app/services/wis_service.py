@@ -1,7 +1,9 @@
 from http.client import HTTPException
-from typing import Dict, Any
+from typing import Dict, Any, Type
 
 from app.connectors.Connectable import BaseConnector
+from app.connectors.ggl_cal_connect import GoogleCalendarConnector
+from app.connectors.requests.Connector.ConnectorAuthorizeRequest import ConnectorAuthorizeRequest
 from app.connectors.requests.Connector.ConnectorExecuteRequest import ConnectorExecuteRequest
 from app.services.guard_service import GuardService
 
@@ -9,17 +11,32 @@ from app.services.guard_service import GuardService
 class WorldInterfaceService:
     def __init__(self, guard: GuardService):
         self.guard = guard
+        self.available_connectors: Dict[str, Type[BaseConnector]] = {} # todo ::: make this into a factory
         self.connector_registry: Dict[str, BaseConnector] = {}
 
-    def register_connector(self, name: str, connector: Any):
-        self.connector_registry[name] = connector
+        # todo ::: load available connectors and remove below
+        self.connector_registry["google_calendar"] = GoogleCalendarConnector()
 
-    def connector_execute(self, payload: ConnectorExecuteRequest):
 
-        if not self.guard.verify_permission(payload.badge_id, payload.action):
-            raise HTTPException(status_code=403, detail="Permission denied")
 
-        connector = self.connector_registry.get(connector_name)
+    def auth_connector(self, req : ConnectorAuthorizeRequest):
+
+        if req.connector_name not in self.available_connectors:
+            return None
+
+        connector = self.available_connectors[req.connector_name]
+        self.connector_registry[req.connector_name] = connector(req.api_key, req.user_id)
+        # todo ::: register connector in db
+        return None
+
+    def connector_execute(self, req: ConnectorExecuteRequest):
+
+        if not self.guard.verify_permission(req.badge_id, req.action):
+            return None
+
+        connector = self.connector_registry.get(req.connector)
+
         if not connector:
-            raise HTTPException(status_code=404, detail="Connector not found")
-        return connector.execute(action, payload)
+            return None
+
+        return connector.execute(req.action, req.payload)
