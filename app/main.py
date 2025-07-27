@@ -2,13 +2,14 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from app.config import Settings
+from app.services.wis_service import WorldInterfaceService
 
 settings = Settings()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.state.settings = settings
-    # app.state.composio =
+    app.state.wis = WorldInterfaceService
     # app.state.guard = guard_service.GuardService()
 
 

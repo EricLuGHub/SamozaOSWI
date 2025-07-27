@@ -1,9 +1,11 @@
-from app.connectors.Connectable import IConnector
+from app.connectors.Connectable import BaseConnector
 
 
-class GoogleCalendarConnector(IConnector):
-    def __init__(self, credentials: dict):
-        self.credentials = credentials
+class GoogleCalendarConnector(BaseConnector):
+    def __init__(self):
+        # get from db or set none
+        self.credentials = None
+
 
     def execute(self, action: str, payload: object) -> dict:
 
@@ -20,4 +22,5 @@ class GoogleCalendarConnector(IConnector):
     def authenticate(self) -> bool:
         pass
 
-    def 
+    def ggl_cal_create_event(self, payload: dict) -> dict:
+        pass
