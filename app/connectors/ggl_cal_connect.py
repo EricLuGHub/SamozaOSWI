@@ -12,13 +12,16 @@ class GoogleCalendarConnector(BaseConnector):
         if api_key and entity_id:
             self.authenticate(api_key, entity_id)
 
-
     def execute(self, action: str, payload: Dict[str, Any]) -> None:
+
 
         if self.composio_toolset is None:
             return None
 
-        if action == "GOOGLECALENDAR_CREATE_EVEN":
+        print("log::: here??? ")
+
+        if action == "GOOGLECALENDAR_CREATE_EVENT":
+            print("log::: is it here?2")
             self.ggl_cal_create_event(payload)
 
         elif action == "GOOGLECALENDAR_DUPLICATE_EVENT":
@@ -31,8 +34,7 @@ class GoogleCalendarConnector(BaseConnector):
 
 
     def authenticate(self, api_key: str, user_id: str = "default") -> None:
-
-        pass
+        super().authenticate(api_key,user_id)
 
     def register_connector(self) -> None:
         # todo ::: way to register an return token and entity id
@@ -41,7 +43,29 @@ class GoogleCalendarConnector(BaseConnector):
 
     def ggl_cal_create_event(self, payload: Dict[str, Any]) -> None:
         # todo ::: add some kind of verifier for the object
+        print("log::: is it here?",  self.composio_toolset.api_key)
         result = self.composio_toolset.execute_action(
             action=Action(value="GOOGLECALENDAR_CREATE_EVENT"),
-            params = payload)
+            params = {
+        "calendar_id": "primary",
+        "summary": "Team Sync with Eric",
+        "description": "Weekly catch-up with the team",
+        "start_datetime": "2025-07-27T15:00:00-04:00",
+        "event_duration_hour": 1,
+        "event_duration_minutes": 0,
+        "eventType": "default",
+        "attendees": [],
+        "guestsCanInviteOthers": True,
+        "guestsCanSeeOtherGuests": True,
+        "guests_can_modify": False,
+        "create_meeting_room": True,
+        "location": "Zoom",
+        "recurrence": ["RRULE:FREQ=WEEKLY;BYDAY=FR"],
+        "send_updates": True,
+        "timezone": "America/Toronto",
+        "transparency": "opaque",
+        "visibility": "default"
+    })
+
+        print(result)
 

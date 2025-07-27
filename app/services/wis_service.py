@@ -37,6 +37,7 @@ class WorldInterfaceService:
     def connector_execute(self, req: ConnectorExecuteRequest):
 
         if not self.guard.verify_permission(req.badge_id, req.action):
+
             return None
 
         connector = self.connector_registry.get(req.connector)

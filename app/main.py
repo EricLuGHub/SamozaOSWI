@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from app.config import Settings
+from app.routers.connect_router import connector_router
 from app.services.composio_service import ComposioService
 from app.services.guard_service import GuardService
 from app.services.wis_service import WorldInterfaceService
@@ -14,7 +15,7 @@ async def lifespan(app: FastAPI):
     app.state.guard = GuardService()
     app.state.composio_service = ComposioService()
 
-    app.state.wis_service = WorldInterfaceService(app.state.guard, app.state.composio_service)
+    app.state.wis = WorldInterfaceService(app.state.guard, app.state.composio_service)
     # app.state.guard = guard_service.GuardService()
 
 
@@ -30,9 +31,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-from .routers import badge_router
+from .routers.badge_router import badge_router
 
-app.include_router(badge_router.badge_router, prefix="/badge", tags=["auth"])
+app.include_router(badge_router, prefix="/badge", tags=["auth"])
+app.include_router(connector_router, prefix="/connect", tags=["auth"])
 
 @app.get("/")
 async def root():
