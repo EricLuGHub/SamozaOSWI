@@ -13,6 +13,8 @@ class WorldInterfaceService:
                  guard: GuardService,
                  composio_service: ComposioService):
         self.guard = guard
+        self.composio_service = composio_service
+
         self.available_connectors: Dict[str, Type[BaseConnector]] = {} # todo ::: make this into a factory
         self.connector_registry: Dict[str, BaseConnector] = {}
         self.composio_service = ComposioService()
@@ -22,8 +24,7 @@ class WorldInterfaceService:
 
 
 
-    def auth_connector(self, req : ConnectorAuthorizeRequest, composio_service: ComposioService = Depends()):
-
+    def auth_connector(self, req : ConnectorAuthorizeRequest):
 
         if req.connector_name not in self.available_connectors:
             return None
@@ -39,6 +40,8 @@ class WorldInterfaceService:
             return None
 
         connector = self.connector_registry.get(req.connector)
+
+        connector.execute(req.action, req.payload)
 
         if not connector:
             return None

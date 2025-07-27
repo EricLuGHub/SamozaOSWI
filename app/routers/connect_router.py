@@ -13,6 +13,7 @@ async def connector_status():
 
 @connector_router.post("/execute")
 async def connector_execute(req : ConnectorExecuteRequest, wis : WorldInterfaceService = Depends(get_wis_service)):
+    print(req)
     res = wis.connector_execute(req)
     return
 
