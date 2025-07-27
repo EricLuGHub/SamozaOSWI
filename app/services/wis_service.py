@@ -1,6 +1,6 @@
 from typing import Dict, Any, Type
 from fastapi import Depends
-from app.connectors.Connectable import BaseConnector
+from app.connectors.BaseConnector import BaseConnector
 from app.connectors.ggl_cal_connect import GoogleCalendarConnector
 from app.connectors.requests.Connector.ConnectorAuthorizeRequest import ConnectorAuthorizeRequest
 from app.connectors.requests.Connector.ConnectorExecuteRequest import ConnectorExecuteRequest
@@ -47,4 +47,4 @@ class WorldInterfaceService:
         if not connector:
             return None
 
-        return connector.execute(req.action, req.payload)
+        return None

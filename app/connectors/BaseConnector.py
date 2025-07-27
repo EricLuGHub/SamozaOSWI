@@ -19,7 +19,7 @@ class BaseConnector:
     @abstractmethod
     def authenticate(self, api_key: str, user_id: str="default") -> None:
         # todo ::: find way to check/validate creds
-        self.composio_toolset = ComposioToolSet(api_key, user_id)
+        self.composio_toolset = ComposioToolSet(api_key=api_key, user_id=user_id)
 
     @abstractmethod
     def execute(self, action: str, payload: dict[str, Any]) -> Dict[str, Any]:

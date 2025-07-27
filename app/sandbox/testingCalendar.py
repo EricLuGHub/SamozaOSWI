@@ -12,7 +12,7 @@ result = composio_toolset.execute_action(
         "calendar_id": "primary",
         "summary": "Team Sync with Eric",
         "description": "Weekly catch-up with the team",
-        "start_datetime": "2025-07-27T15:00:00-04:00",  # Required
+        "start_datetime": "2025-07-31T15:00:00-04:00",  # Required
         "event_duration_hour": 1,
         "event_duration_minutes": 0,
         "eventType": "default",
@@ -22,7 +22,7 @@ result = composio_toolset.execute_action(
         "guests_can_modify": False,
         "create_meeting_room": True,
         "location": "Zoom",
-        "recurrence": ["RRULE:FREQ=WEEKLY;BYDAY=FR"],
+        "recurrence": [],
         "send_updates": True,
         "timezone": "America/Toronto",
         "transparency": "opaque",
