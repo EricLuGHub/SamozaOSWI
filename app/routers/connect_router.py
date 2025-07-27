@@ -18,5 +18,6 @@ async def connector_execute(req : ConnectorExecuteRequest, wis : WorldInterfaceS
 
 @connector_router.post("/authorize")
 async def connector_authorize(req : ConnectorAuthorizeRequest):
+    # todo ::: should not be this, should only pass the connector name
 
     pass
