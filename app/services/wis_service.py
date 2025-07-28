@@ -19,7 +19,7 @@ class WorldInterfaceService:
         self.connector_registry: Dict[str, BaseConnector] = {}
         self.composio_service = ComposioService()
 
-        # todo ::: load available connectors from credentials and remove below and auth through actual auth func
+        # todo ::: todo remove this and just create toolset on the fly
         self.connector_registry["google_calendar"] = GoogleCalendarConnector("61lsia39d25b45nqftihia", "default")
 
 
@@ -36,15 +36,21 @@ class WorldInterfaceService:
 
     def connector_execute(self, req: ConnectorExecuteRequest):
 
-        if not self.guard.verify_permission(req.badge_id, req.action):
+        creds = self.guard.verify_permission(req.badge_id, req.action)
 
+        if not creds:
             return None
 
-        connector = self.connector_registry.get(req.connector)
-
-        connector.execute(req.action, req.payload)
+        connector = self.connector_registry.get(req.connector_name)
 
         if not connector:
             return None
+
+        # create connector
+        # new_connector = connector(creds)
+        # new_connector.execute(creds.api_key, creds.entity_id)
+
+        # todo ::: remove this and replace by logic above
+        connector.execute(req.action, req.payload)
 
         return None

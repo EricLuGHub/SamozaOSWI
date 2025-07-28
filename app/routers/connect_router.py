@@ -7,10 +7,6 @@ from app.services.wis_service import WorldInterfaceService
 
 connector_router = APIRouter(prefix="", tags=["connectors"])
 
-@connector_router.get("/status")
-async def connector_status():
-    pass
-
 @connector_router.post("/execute")
 async def connector_execute(req : ConnectorExecuteRequest, wis : WorldInterfaceService = Depends(get_wis_service)):
     res = wis.connector_execute(req)

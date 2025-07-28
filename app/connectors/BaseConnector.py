@@ -9,6 +9,8 @@ class BaseConnector:
     entity_id: str
     composio_toolset: ComposioToolSet
 
+    # todo ::: base_composio
+
     def __init__(self, api_key: str, entity_id: str):
         self.api_key = api_key
         self.entity_id = entity_id
