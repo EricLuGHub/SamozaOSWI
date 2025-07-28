@@ -4,6 +4,7 @@ from typing import Dict, List
 class GuardService:
     def __init__(self):
         self.sap_matrix: Dict[str, List[str]] = {}
+
     def load_permissions(self, manifest_path: str):
         # TODO::: load the perms
         pass
@@ -14,3 +15,4 @@ class GuardService:
         return True
         # TODO ::: todo
         return permission in self.sap_matrix.get(badge_id, [])
+
