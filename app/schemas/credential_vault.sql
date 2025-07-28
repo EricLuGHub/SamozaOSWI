@@ -4,6 +4,7 @@ create table credentials (
     id serial primary key,
     badge_id text not null,
     is_bot boolean not null default false,
+    api_key text not null,
     token text not null,
     service_name text not null,
     created_at timestamp with time zone default now(),

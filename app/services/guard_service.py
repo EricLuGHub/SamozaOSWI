@@ -16,3 +16,9 @@ class GuardService:
         # TODO ::: todo
         return permission in self.sap_matrix.get(badge_id, [])
 
+    def add_permission(self, badge_id: str, permission: str) -> None:
+        if badge_id not in self.sap_matrix:
+            self.sap_matrix[badge_id] = []
+        if permission not in self.sap_matrix[badge_id]:
+            self.sap_matrix[badge_id].append(permission)
+
