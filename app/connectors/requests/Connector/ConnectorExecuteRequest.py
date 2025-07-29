@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class ConnectorExecuteRequest(BaseModel):
     badge_id: str
     connector_name: str
+    account_name: str
     action: str
     payload: Dict[str, Any]
 

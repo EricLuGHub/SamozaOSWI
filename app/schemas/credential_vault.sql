@@ -7,6 +7,8 @@ create table credentials (
     api_key text not null,
     token text not null,
     service_name text not null,
+    account_name text not null,
+
     created_at timestamp with time zone default now(),
     updated_at timestamp with time zone default now(),
     deleted_at timestamp with time zone
