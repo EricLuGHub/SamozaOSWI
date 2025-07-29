@@ -17,7 +17,7 @@ def run_auth_flow():
 
     try:
         print(f"Initiating {app_to_connect} connection...")
-        connection_request = entity.initiate_connection(app_name=app_to_connect)
+        connection_request = entity.initiate_connection(app_name="GOOGLECALENDAR")
 
         if connection_request.redirectUrl:
             print("\n!!! ACTION REQUIRED !!!")
@@ -55,7 +55,7 @@ def run_auth_flow():
                 action=Action.GOOGLECALENDAR_CREATE_EVENT,
                 params={
                     "calendar_id": "primary",
-                    "summary": "LOLOL Sync with Eric",
+                    "summary": "okok Sync with Eric",
                     "description": "Weekly catch-up with the team",
                     "start_datetime": "2025-07-31T15:00:00-04:00",  # Required
                     "event_duration_hour": 1,

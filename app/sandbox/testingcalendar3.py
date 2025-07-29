@@ -1,7 +1,5 @@
 from composio_llamaindex import ComposioToolSet, Action, App
 
-
-print(App.GOOGLECALENDAR)
 # toolset = ComposioToolSet()
 # user_info = toolset.execute_action(
 #                 action=Action.GOOGLECALENDAR_CREATE_EVENT,

@@ -7,7 +7,7 @@ from composio_llamaindex import ComposioToolSet, Action
 class GoogleCalendarConnector(BaseConnector):
     def __init__(self, api_key: str = None, entity_id: str = None):
         super().__init__(api_key, entity_id)
-        self.connector_name = "GoogleCalendarConnector"
+        self.connector_name = "GOOGLECALENDAR"
 
         if api_key and entity_id:
             self.authenticate(api_key, entity_id)

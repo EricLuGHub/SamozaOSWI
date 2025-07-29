@@ -1,7 +1,7 @@
 from http.client import HTTPException
 from typing import Dict
 
-from app.models.Credential import Credential
+from app.models.credential import Credential
 from app.models.SAPEntry import SAPEntry
 from app.models.badge import Badge
 
