@@ -18,7 +18,7 @@ async def connector_authorize(req : ConnectorAuthorizeRequest, wis : WorldInterf
     res = wis.auth_connector(req)
 
     # todo ::: return user id
-    pass
+    return
 
 @connector_router.post("/disconnect")
 async def connector_disconnect(req : ConnectorAuthorizeRequest, wis : WorldInterfaceService = Depends(get_wis_service)):

@@ -5,32 +5,38 @@ from app.connectors.ggl_cal_connect import GoogleCalendarConnector
 from app.connectors.requests.Connector.ConnectorAuthorizeRequest import ConnectorAuthorizeRequest
 from app.connectors.requests.Connector.ConnectorExecuteRequest import ConnectorExecuteRequest
 from app.services.composio_service import ComposioService
+from app.services.credential_service import CredentialService
 from app.services.guard_service import GuardService
 
 
 class WorldInterfaceService:
     def __init__(self,
                  guard: GuardService,
-                 composio_service: ComposioService):
+                 composio_service: ComposioService,
+                 credential_service: CredentialService):
+
         self.guard = guard
         self.composio_service = composio_service
-
         self.available_connectors: Dict[str, Type[BaseConnector]] = {} # todo ::: make this into a factory
         self.connector_registry: Dict[str, BaseConnector] = {}
-        self.composio_service = ComposioService()
-
-        # todo ::: todo remove this and just create toolset on the fly
-        self.connector_registry["google_calendar"] = GoogleCalendarConnector("61lsia39d25b45nqftihia", "default")
+        self.credential_service = credential_service
 
 
+    def _load_connectors(self):
+        pass
 
     def auth_connector(self, req : ConnectorAuthorizeRequest):
+
+
+        # todo ::: check if user has permission to add connector
 
         if req.connector_name not in self.available_connectors:
             return None
 
         connector = self.available_connectors[req.connector_name]
         self.connector_registry[req.connector_name] = connector(req.api_key, req.user_id)
+
+
         # todo ::: register connector in db
         return None
 

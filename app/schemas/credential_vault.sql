@@ -1,13 +1,14 @@
-drop table if exists credentialvault;
+drop table if exists credentials;
 
 create table credentials (
     id serial primary key,
-    badge_id text not null,
     is_bot boolean not null default false,
-    api_key text not null,
-    token text not null,
     service_name text not null,
-    account_name text not null,
+    user_id integer not null,
+    connection_id integer not null,
+
+    access_token text,
+    refresh_token text,
 
     created_at timestamp with time zone default now(),
     updated_at timestamp with time zone default now(),

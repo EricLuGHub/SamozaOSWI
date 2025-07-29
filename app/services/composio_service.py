@@ -1,27 +1,24 @@
-from composio_llamaindex import ComposioToolSet
+import uuid
+
+from composio_llamaindex import ComposioToolSet, App
 
 class ComposioService:
     def __init__(self):
-        pass
+        self.composio_toolset: ComposioToolSet = ComposioToolSet()
 
-    def authenticate(self, web_service: str) -> str:
-
-        # check in the db if there are any composio credentials
-        # if not, fetch from "api"
-        # call on launch
-
-        composio_toolset = ComposioToolSet()
+    def add_connector(self, connector_name) -> (str, str):
 
 
 
+        app_to_connect = App[connector_name]
+        if not app_to_connect:
+            return None
 
-        return ""
+        new_user_id = str(uuid.uuid4())
 
-    def execute_connection(self, app, action, payload):
-        pass
+        entity = self.composio_toolset.get_entity(id=new_user_id)
+        
 
-    def add_connector(self, connector) -> (str, str):
-        # todo::: add connector to composio account
-        if connector == "google_calendar":
-            return "61lsia39d25b45nqftihia", "default"
+
+
         return None
