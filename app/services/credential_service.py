@@ -1,29 +1,41 @@
+from typing import Optional
+
+from sqlalchemy.orm import Session
+from app.models.credential import CredentialORM
+from app.DTO.CredentialDTO import Credential
 
 class CredentialService:
-    def __init__(self, credential_repository):
-        self.credential_repository = credential_repository
+    def __init__(self, db : Session):
         self.db = db
 
-    def get_credentials(self, user_id):
+    def get_credentials(self, user_id, service_name) -> Optional[CredentialORM]:
         """
         Retrieves credentials for a given user.
         """
-        return self.credential_repository.get_credentials(user_id)
+        return (self.db.query(CredentialORM)
+                .filter_by(user_id=user_id, service_name=service_name)
+                .first())
 
-    def add_credential(self, credential):
-        """
-        Adds a new credential for a user.
-        """
-        return self.credential_repository.add_credential(credential)
+    def add_credential(self, cred: Credential) -> CredentialORM:
+        cred_orm = CredentialORM(**cred.model_dump())
+        self.db.add(cred_orm)
+        self.db.commit()
+        self.db.refresh(cred_orm)
+        return cred_orm
 
-    def update_credential(self, user_id, credential_id, updated_credential):
-        """
-        Updates an existing credential for a user.
-        """
-        return self.credential_repository.update_credential(user_id, credential_id, updated_credential)
-
-    def delete_credential(self, user_id, credential_id):
+    def delete_credential(self, user_id, service_name) -> bool:
         """
         Deletes a credential for a user.
         """
-        return self.credential_repository.delete_credential(user_id, credential_id)
+        cred = (
+            self.db
+            .query(CredentialORM)
+            .filter_by(user_id=user_id, service_name=service_name)
+            .first()
+        )
+        if not cred:
+            return False
+
+        self.db.delete(cred)
+        self.db.commit()
+        return True

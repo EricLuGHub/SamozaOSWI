@@ -6,10 +6,6 @@ from app.services.auth_service import AuthService
 
 badge_router = APIRouter(prefix="/components", tags=["components"])
 
-@badge_router.get("/badges")
-async def get_badges(svc: AuthService = Depends(get_badge_service)):
-    return list(svc.badges.values())
-
 @badge_router.post("/create-badge")
 async def create_badge(badge_id: str, svc: AuthService = Depends(get_badge_service)):
     if badge_id in svc.badges:

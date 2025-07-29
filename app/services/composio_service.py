@@ -29,7 +29,7 @@ class ComposioService:
                     access_token=active_connection.access_token,
                     refresh_token=active_connection.refresh_token
                 )
-            
+
             except Exception as e:
                 print(f"Error waiting for connection: {e}")
 
