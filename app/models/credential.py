@@ -1,12 +1,13 @@
-from typing import Optional
+from sqlalchemy import Column, Integer, String, Boolean, Text
+from app.db import Base
 
-from pydantic import BaseModel
+class CredentialORM(Base):
+    __tablename__ = "credentials"
+    id             = Column(Integer, primary_key=True, index=True)
+    service_name   = Column(String, nullable=True)
+    is_bot         = Column(Boolean, default=False)
+    user_id        = Column(String, nullable=True)
+    connection_id  = Column(String, nullable=True)
 
-
-class Credential(BaseModel):
-    service_name:    Optional[str] = None
-    is_bot:          bool           = False
-    user_id:         Optional[str] = None
-    connection_id:   Optional[str] = None
-    access_token:    Optional[str] = None
-    refresh_token:   Optional[str] = None
+    access_token   = Column(Text, nullable=True)
+    refresh_token  = Column(Text, nullable=True)

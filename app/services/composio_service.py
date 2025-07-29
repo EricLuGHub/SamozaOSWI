@@ -1,8 +1,6 @@
 import uuid
-
 from composio_llamaindex import ComposioToolSet, App
-
-from app.models.credential import Credential
+from app.DTO.CredentialDTO import Credential
 
 
 class ComposioService:
@@ -23,15 +21,15 @@ class ComposioService:
                     timeout=120
                 )
 
-                credential = Credential()
+                return Credential(
+                    connection_id=active_connection.id,
+                    user_id=new_user_id,
+                    service_name=connector_name,
 
-                credential.service_name = connector_name
-                credential.user_id = new_user_id
-                credential.connector_id = active_connection.id
-                credential.access_token = active_connection.access_token
-                credential.refresh_token = active_connection.refresh_token
-
-                return credential
+                    access_token=active_connection.access_token,
+                    refresh_token=active_connection.refresh_token
+                )
+            
             except Exception as e:
                 print(f"Error waiting for connection: {e}")
 

@@ -18,7 +18,6 @@ class WorldInterfaceService:
         self.guard = guard
         self.composio_service = composio_service
         self.available_connectors: Dict[str, Type[BaseConnector]] = {} # todo ::: make this into a factory
-        self.connector_registry: Dict[str, BaseConnector] = {}
         self.credential_service = credential_service
 
 
@@ -33,8 +32,13 @@ class WorldInterfaceService:
         if req.connector_name not in self.available_connectors:
             return None
 
-        connector = self.available_connectors[req.connector_name]
-        self.connector_registry[req.connector_name] = connector(req.api_key, req.user_id)
+        creds = self.composio_service.add_connector(req.connector_name)
+
+        if not creds:
+            return None
+
+        self.credential_service.add_credential(creds)
+
 
 
         # todo ::: register connector in db

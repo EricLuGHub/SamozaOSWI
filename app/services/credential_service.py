@@ -2,6 +2,7 @@
 class CredentialService:
     def __init__(self, credential_repository):
         self.credential_repository = credential_repository
+        self.db = db
 
     def get_credentials(self, user_id):
         """
@@ -9,11 +10,11 @@ class CredentialService:
         """
         return self.credential_repository.get_credentials(user_id)
 
-    def add_credential(self, user_id, credential):
+    def add_credential(self, credential):
         """
         Adds a new credential for a user.
         """
-        return self.credential_repository.add_credential(user_id, credential)
+        return self.credential_repository.add_credential(credential)
 
     def update_credential(self, user_id, credential_id, updated_credential):
         """
