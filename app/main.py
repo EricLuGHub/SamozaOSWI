@@ -1,7 +1,11 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from sqlalchemy.engine.create import create_engine
+from sqlalchemy.orm.session import sessionmaker
+
 from app.config import Settings
+from app.db import SQLALCHEMY_DATABASE_URL, SessionLocal, Base
 from app.routers.connect_router import connector_router
 from app.services.composio_service import ComposioService
 from app.services.guard_service import GuardService
@@ -9,22 +13,27 @@ from app.services.wis_service import WorldInterfaceService
 
 settings = Settings()
 
+SQLALCHEMY_DATABASE_URL = settings.db_url
+engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+SessionLocal = sessionmaker(bind=engine, autoflesh=False, autocommit=False)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+
+
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    app.state.db = db
+
     app.state.settings = settings
     app.state.guard = GuardService()
     app.state.composio_service = ComposioService()
-
     app.state.wis = WorldInterfaceService(app.state.guard, app.state.composio_service)
-    # app.state.guard = guard_service.GuardService()
-
-
-    #startup flow
-    # initialize db connection here
 
     yield
-    # shut down logic here
-    # close db
+
+    db.close()
 
 app = FastAPI(
     title="SamozaOS World Interface",
