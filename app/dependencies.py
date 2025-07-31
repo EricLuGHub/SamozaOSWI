@@ -2,9 +2,6 @@ from fastapi import Request
 
 # return request.app.state.composio
 
-def get_auth_service(request: Request):
-    return None
-
 def get_guard_service(request: Request):
     return None
 
