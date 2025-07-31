@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text
+from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, func
 from app.db import Base
 
 class CredentialORM(Base):
@@ -11,3 +11,19 @@ class CredentialORM(Base):
 
     access_token   = Column(Text, nullable=True)
     refresh_token  = Column(Text, nullable=True)
+
+    created_at     = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False
+    )
+    updated_at     = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+        nullable=False)
+
+    expires_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
