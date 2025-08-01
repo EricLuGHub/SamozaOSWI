@@ -4,7 +4,7 @@ from app.connectors.requests.Connector.ConnectorAuthorizeRequest import Connecto
 from app.connectors.requests.Connector.ConnectorExecuteRequest import ConnectorExecuteRequest
 from app.dependencies import get_wis_service
 from app.services.wis_service import WorldInterfaceService
-
+from fastapi import BackgroundTasks
 connector_router = APIRouter(prefix="", tags=["connectors"])
 
 @connector_router.post("/execute")
@@ -13,11 +13,12 @@ async def connector_execute(req : ConnectorExecuteRequest, wis : WorldInterfaceS
     return
 
 @connector_router.post("/authorize")
-async def connector_authorize(req : ConnectorAuthorizeRequest, wis : WorldInterfaceService = Depends(get_wis_service)):
+async def connector_authorize(
+        req : ConnectorAuthorizeRequest,
+        background_tasks: BackgroundTasks,
+        wis : WorldInterfaceService = Depends(get_wis_service)):
     # todo ::: should not be this, should only pass the connector name
-    res = wis.auth_connector(req)
-
-    # todo ::: return user id
+    res = wis.auth_connector(req, background_tasks)
     return res
 
 @connector_router.post("/disconnect")

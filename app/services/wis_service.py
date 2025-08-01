@@ -1,6 +1,5 @@
-import pkgutil
 from typing import Dict, Any, Type
-from fastapi import Depends
+from fastapi import BackgroundTasks
 from app.connectors.BaseConnector import BaseConnector
 from app.connectors.ggl_cal_connect import GoogleCalendarConnector
 from app.connectors.requests.Connector.ConnectorAuthorizeRequest import ConnectorAuthorizeRequest
@@ -24,33 +23,35 @@ class WorldInterfaceService:
         self.available_connectors: Dict[str, Type[BaseConnector]] = {} # todo ::: make this into a factory
         self.credential_service = credential_service
 
+        self._load_available_connectors()
+
+
     def _load_available_connectors(self):
         for finder, module_name, is_pkg in pkgutil.iter_modules(connectors_pkg.__path__):
             module = importlib.import_module(f"{connectors_pkg.__name__}.{module_name}")
 
             for _, cls in inspect.getmembers(module, inspect.isclass):
                 if issubclass(cls, BaseConnector) and cls is not BaseConnector:
-                    key = getattr(cls, "connector_name", cls.__name__)
+                    key = cls.connector_name
                     self.available_connectors[key] = cls
 
-    def auth_connector(self, req : ConnectorAuthorizeRequest)->str:
+    def auth_connector(self, req : ConnectorAuthorizeRequest, bt: BackgroundTasks):
 
 
         # todo ::: check if user has permission to add connector
-
         if req.connector_name not in self.available_connectors:
-            print("here?")
             return None
 
-        creds = self.composio_service.add_connector(req.connector_name)
+        connection_req, user_id = self.composio_service.begin_add_connector(req.connector_name)
+        if connection_req.redirectUrl:
+            bt.add_task(self.composio_service.finish_connector,
+                        connection_req, user_id, req.connector_name)
 
-        if not creds:
-            return None
+            return {"redirect_url": connection_req.redirectUrl, "user_id": user_id}
 
-        self.credential_service.add_credential(creds)
-
-        # todo ::: register connector in db
-        return creds.user_id
+        return {"user_id": user_id, "status": "connected"}
+        # self.credential_service.add_credential(creds)
+        # return creds.user_id
 
     def connector_execute(self, req: ConnectorExecuteRequest):
 
