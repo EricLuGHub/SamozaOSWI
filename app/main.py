@@ -25,8 +25,11 @@ async def lifespan(app: FastAPI):
 
     app.state.settings = settings
     app.state.guard = GuardService()
-    app.state.composio_service = ComposioService()
     app.state.credential_service = CredentialService(db)
+    app.state.composio_service = ComposioService(
+        app.state.credential_service
+    )
+
     app.state.wis = WorldInterfaceService(app.state.guard,
                                           app.state.composio_service,
                                           app.state.credential_service)

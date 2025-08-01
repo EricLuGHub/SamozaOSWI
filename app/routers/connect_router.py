@@ -17,10 +17,10 @@ async def connector_authorize(
         req : ConnectorAuthorizeRequest,
         background_tasks: BackgroundTasks,
         wis : WorldInterfaceService = Depends(get_wis_service)):
-    # todo ::: should not be this, should only pass the connector name
     res = wis.auth_connector(req, background_tasks)
     return res
 
 @connector_router.post("/disconnect")
 async def connector_disconnect(req : ConnectorAuthorizeRequest, wis : WorldInterfaceService = Depends(get_wis_service)):
+    # TODO: just delete the entry from db
     pass

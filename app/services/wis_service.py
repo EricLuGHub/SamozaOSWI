@@ -44,14 +44,12 @@ class WorldInterfaceService:
 
         connection_req, user_id = self.composio_service.begin_add_connector(req.connector_name)
         if connection_req.redirectUrl:
-            bt.add_task(self.composio_service.finish_connector,
+            bt.add_task(self.composio_service.finish_add_connector,
                         connection_req, user_id, req.connector_name)
 
             return {"redirect_url": connection_req.redirectUrl, "user_id": user_id}
 
-        return {"user_id": user_id, "status": "connected"}
-        # self.credential_service.add_credential(creds)
-        # return creds.user_id
+        return {"status": "connected failed"}
 
     def connector_execute(self, req: ConnectorExecuteRequest):
 

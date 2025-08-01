@@ -17,7 +17,7 @@ class CredentialService:
                 .first())
 
     def add_credential(self, cred: Credential) -> CredentialORM:
-        cred_orm = CredentialORM(**cred.model_dump())
+        cred_orm = CredentialORM(**cred.model_dump()) # TODO ::: mapper maybe?
         self.db.add(cred_orm)
         self.db.commit()
         self.db.refresh(cred_orm)
