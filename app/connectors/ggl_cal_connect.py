@@ -7,16 +7,13 @@ from composio_llamaindex import ComposioToolSet, Action
 class GoogleCalendarConnector(BaseConnector):
     connector_name = "GOOGLECALENDAR"
 
-    def __init__(self, api_key: str = None, entity_id: str = None):
-        super().__init__(api_key, entity_id)
+    def __init__(self, user_id: str = None, connection_id: str = None):
+        super().__init__(user_id, connection_id)
 
-        if api_key and entity_id:
-            self.authenticate(api_key, entity_id)
 
     def execute(self, action: str, payload: Dict[str, Any]) -> None:
 
-
-        if self.composio_toolset is None:
+        if not action or not payload or not self.user_id or not self.connection_id:
             return None
 
         if action == "GOOGLECALENDAR_CREATE_EVENT":
@@ -30,15 +27,15 @@ class GoogleCalendarConnector(BaseConnector):
 
         return None
 
-
-    def authenticate(self, api_key: str, user_id: str = "default") -> None:
-        super().authenticate(api_key,user_id)
-
     def ggl_cal_create_event(self, payload: Dict[str, Any]) -> None:
         # todo ::: add some kind of verifier for the object
-        result = self.composio_toolset.execute_action(
+        toolset = ComposioToolSet()
+        result = toolset.execute_action(
             action=Action(value="GOOGLECALENDAR_CREATE_EVENT"),
-            params = payload)
+            params = payload,
+            entity_id=self.user_id,
+            connected_account_id=self.connection_id
+        )
 
         print(result)
 

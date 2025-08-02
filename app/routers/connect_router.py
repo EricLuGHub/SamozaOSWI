@@ -12,7 +12,7 @@ async def connector_execute(
         req : ConnectorExecuteRequest,
         wis : WorldInterfaceService = Depends(get_wis_service)):
     res = wis.connector_execute(req)
-    return
+    return res
 
 @connector_router.post("/authorize")
 async def connector_authorize(

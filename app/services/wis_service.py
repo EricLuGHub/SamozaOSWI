@@ -64,21 +64,28 @@ class WorldInterfaceService:
 
     def connector_execute(self, req: ConnectorExecuteRequest):
 
-        creds = self.guard.verify_permission(req.badge_id, req.action)
+        hasAccess = self.guard.verify_permission(req.badge_id, req.action)
+
+        if not hasAccess:
+            return {"error": "You do not have permission to execute this action."}
+
+        creds = self.credential_service.get_credentials(req.user_id, req.connector_name)
 
         if not creds:
-            return None
+            return {"error": "No credentials found for this connector."}
 
-        connector = self.connector_registry.get(req.connector_name)
+
+
+        connector = self.available_connectors.get(req.connector_name)
 
         if not connector:
             return None
 
-        # create connector
-        # new_connector = connector(creds)
-        # new_connector.execute(creds.api_key, creds.entity_id)
-
+        new_connector = connector(
+            user_id=creds.user_id,
+            connection_id=req.connection_id
+        )
         # todo ::: remove this and replace by logic above
-        connector.execute(req.action, req.payload)
+        new_connector.execute(req.action, req.payload)
 
         return None
