@@ -1,6 +1,6 @@
 import uuid
 from composio_llamaindex import ComposioToolSet, App
-from app.DTO.CredentialDTO import Credential
+from app.DTO.credentialDTO import CredentialDTO
 from composio.client.collections import ConnectionRequestModel
 
 from app.services.credential_service import CredentialService
@@ -31,7 +31,7 @@ class ComposioService:
 
         if status.lower() != "success":
             return False
-        creds = Credential(
+        creds = CredentialDTO(
             connection_id=connected_account_id,
             user_id=user_id,
             service_name=service_name.upper(),

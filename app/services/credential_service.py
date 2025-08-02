@@ -1,8 +1,8 @@
 from typing import Optional
 
 from sqlalchemy.orm import Session
-from app.models.credential import CredentialORM
-from app.DTO.CredentialDTO import Credential
+from app.models.credentialORM import CredentialORM
+from app.DTO.credentialDTO import CredentialDTO
 
 class CredentialService:
     def __init__(self, db : Session):
@@ -16,7 +16,7 @@ class CredentialService:
                 .filter_by(user_id=user_id, service_name=service_name)
                 .first())
 
-    def add_credential(self, cred: Credential) -> CredentialORM:
+    def add_credential(self, cred: CredentialDTO) -> CredentialORM:
         cred_orm = CredentialORM(**cred.model_dump()) # TODO ::: mapper maybe?
         self.db.add(cred_orm)
         self.db.commit()
