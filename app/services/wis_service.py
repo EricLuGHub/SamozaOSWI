@@ -35,21 +35,32 @@ class WorldInterfaceService:
                     key = cls.connector_name
                     self.available_connectors[key] = cls
 
-    def auth_connector(self, req : ConnectorAuthorizeRequest, bt: BackgroundTasks):
+    def auth_connector(self, req : ConnectorAuthorizeRequest):
 
 
         # todo ::: check if user has permission to add connector
         if req.connector_name not in self.available_connectors:
             return None
 
-        connection_req, user_id = self.composio_service.begin_add_connector(req.connector_name)
-        if connection_req.redirectUrl:
-            bt.add_task(self.composio_service.finish_add_connector,
-                        connection_req, user_id, req.connector_name)
+        redir = self.composio_service.begin_add_connector(req.connector_name)
 
-            return {"redirect_url": connection_req.redirectUrl, "user_id": user_id}
+        return {"redirect_url": redir}
 
-        return {"status": "connected failed"}
+    async def handle_connector_callback(
+            self,
+            user_id: str,
+            status: str,
+            connected_account_id: str,
+            app_name: str,
+    ) -> Dict[str, Any]:
+        ok = self.composio_service.finish_add_connector(
+            user_id=user_id,
+            service_name=app_name,
+            connected_account_id=connected_account_id,
+            status=status,
+        )
+        return {"ok": ok, "userId": user_id, "service": app_name}
+
 
     def connector_execute(self, req: ConnectorExecuteRequest):
 

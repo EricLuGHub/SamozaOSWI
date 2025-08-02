@@ -1,13 +1,13 @@
-from composio_llamaindex import ComposioToolSet, Action, App
-
+# from composio_llamaindex import ComposioToolSet, Action, App
+#
 # toolset = ComposioToolSet()
 # user_info = toolset.execute_action(
 #                 action=Action.GOOGLECALENDAR_CREATE_EVENT,
 #                 params={
 #                     "calendar_id": "primary",
-#                     "summary": "LMAO Sync with Eric",
+#                     "summary": "YOYOYO Sync with Eric",
 #                     "description": "Weekly catch-up with the team",
-#                     "start_datetime": "2025-07-31T15:00:00-04:00",  # Required
+#                     "start_datetime": "2025-08-02T15:00:00-04:00",  # Required
 #                     "event_duration_hour": 1,
 #                     "event_duration_minutes": 0,
 #                     "eventType": "default",
@@ -25,7 +25,7 @@ from composio_llamaindex import ComposioToolSet, Action, App
 #                 }
 #                 ,
 #                 entity_id="default",
-#                 connected_account_id="72bb8917-b684-4587-98a0-1bc349776a36"
+#                 connected_account_id="4834305c-585b-45e9-a67e-c41577e30214"
 #             )
 #
 # print(user_info)
