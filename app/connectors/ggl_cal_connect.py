@@ -37,5 +37,5 @@ class GoogleCalendarConnector(BaseConnector):
             connected_account_id=self.connection_id
         )
 
-        print(result)
+        print("LOG:::",result)
 

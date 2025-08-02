@@ -83,7 +83,7 @@ class WorldInterfaceService:
 
         new_connector = connector(
             user_id=creds.user_id,
-            connection_id=req.connection_id
+            connection_id=creds.connection_id
         )
         # todo ::: remove this and replace by logic above
         new_connector.execute(req.action, req.payload)

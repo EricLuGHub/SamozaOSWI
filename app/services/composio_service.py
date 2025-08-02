@@ -17,7 +17,7 @@ class ComposioService:
         entity = self.composio_toolset.get_entity(id=new_user_id)
         conn_req = entity.initiate_connection(
             app_name=connector_name,
-            redirect_url=f"http://localhost:8211/connect/{new_user_id}/callback")
+            redirect_url=f"http://localhost:8211/connect/{new_user_id}/callback") # Todo ::: make this dynamic
 
         return conn_req.redirectUrl
 
@@ -34,7 +34,7 @@ class ComposioService:
         creds = Credential(
             connection_id=connected_account_id,
             user_id=user_id,
-            service_name=service_name,
+            service_name=service_name.upper(),
             access_token=None,
             refresh_token=None,
         )
