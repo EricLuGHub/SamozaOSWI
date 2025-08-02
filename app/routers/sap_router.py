@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends
-
-from app.DTO.badgeDTO import BadgeDTO
-from app.dependencies import get_badge_service
-from app.services.badge_service import BadgeService
+from app.DTO.sapDTO import SapDTO
+from app.dependencies import get_wis_service
+from app.services.wis_service import WorldInterfaceService
 
 sap_router = APIRouter(prefix="", tags=[])
 
-@sap_router.post("/create")
-async def grant_permission(new_badge : BadgeDTO, svc: BadgeService = Depends(get_badge_service)):
-    badge_id  = svc.create_badge(new_badge)
+@sap_router.post("/grant")
+async def grant_permission(sap_perm : SapDTO, svc: WorldInterfaceService = Depends(get_wis_service)):
+    badge_id  = svc.grant_ceio_permissions(sap_perm)
     return {"badge_id": badge_id}
 

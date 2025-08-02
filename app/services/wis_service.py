@@ -1,7 +1,8 @@
 from typing import Dict, Any, Type
 from fastapi import BackgroundTasks
+
+from app.DTO.sapDTO import SapDTO
 from app.connectors.BaseConnector import BaseConnector
-from app.connectors.ggl_cal_connect import GoogleCalendarConnector
 from app.connectors.requests.Connector.ConnectorAuthorizeRequest import ConnectorAuthorizeRequest
 from app.connectors.requests.Connector.ConnectorExecuteRequest import ConnectorExecuteRequest
 from app.services.composio_service import ComposioService
@@ -12,16 +13,21 @@ import importlib
 import pkgutil
 import inspect
 
+from app.services.sap_service import SapService
+
+
 class WorldInterfaceService:
     def __init__(self,
                  guard: GuardService,
                  composio_service: ComposioService,
-                 credential_service: CredentialService):
+                 credential_service: CredentialService,
+                 sap_service: SapService):
 
         self.guard = guard
         self.composio_service = composio_service
         self.available_connectors: Dict[str, Type[BaseConnector]] = {} # todo ::: make this into a factory
         self.credential_service = credential_service
+        self.sap_service = sap_service
 
         self._load_available_connectors()
 
@@ -89,3 +95,12 @@ class WorldInterfaceService:
         new_connector.execute(req.action, req.payload)
 
         return None
+
+    def grant_ceio_permissions(self, sap_perm: SapDTO):
+
+        if not sap_perm.badge_id or not sap_perm.ceio_permissions:
+            return {"error": "Badge ID and permissions are required."}
+
+        # todo ::: check if badge_id is valid
+        self.sap_service.grant_permission(sap_perm.badge_id, sap_perm.ceio_permissions)
+        return {"result": "sap saved"}

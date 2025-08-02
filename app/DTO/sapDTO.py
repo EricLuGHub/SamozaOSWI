@@ -4,6 +4,5 @@ from pydantic import BaseModel
 
 
 class SapDTO(BaseModel):
-    id: str
-    badge_id: str
+    badge_id: int
     ceio_permissions: List[str]
