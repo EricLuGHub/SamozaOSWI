@@ -4,7 +4,6 @@ from app.connectors.requests.Connector.ConnectorAuthorizeRequest import Connecto
 from app.connectors.requests.Connector.ConnectorExecuteRequest import ConnectorExecuteRequest
 from app.dependencies import get_wis_service
 from app.services.wis_service import WorldInterfaceService
-from fastapi import BackgroundTasks
 connector_router = APIRouter(prefix="", tags=["connectors"])
 
 @connector_router.post("/execute")

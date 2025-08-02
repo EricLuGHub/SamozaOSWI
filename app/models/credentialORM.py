@@ -3,7 +3,7 @@ from app.db import Base
 
 class CredentialORM(Base):
     __tablename__ = "credentials"
-    id             = Column(Integer, primary_key=True, index=True)
+    id             = Column(Integer, primary_key=True, autoincrement=True, index=True)
     service_name   = Column(String, nullable=True)
     is_bot         = Column(Boolean, default=False)
     user_id        = Column(String, nullable=True)

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.DTO.badgeDTO import BadgeDTO
+from app.models.badgeORM import BadgeORM
 
 
 class BadgeService:
@@ -12,9 +13,17 @@ class BadgeService:
 
         return None
 
-    def add_badge(self, badge: BadgeDTO):
-        badge_orm = BadgeDTO(**badge.model_dump())
+    def create_badge(self, badge: BadgeDTO)-> int:
+        badge_orm = BadgeORM(
+            badge_name=badge.badge_name,
+            badge_type=badge.badge_type,
+            is_valid=badge.validity,
+            validity_period=badge.validity_time,
+            is_ephemeral=badge.is_ephemeral,
+        )
+
         self.db.add(badge_orm)
         self.db.commit()
         self.db.refresh(badge_orm)
-        return badge_orm
+
+        return badge_orm.badge_id
