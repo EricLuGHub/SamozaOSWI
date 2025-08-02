@@ -1,28 +1,20 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from app.models.sapORM import SapORM
+from app.utils.sap_functions import ceio_to_int
+
 
 # TODO::: move this?
 
-_CEIO_MAP = {
-    "c":       1 << 0,   # 1
-    "e":      1 << 1,   # 2
-    "i": 1 << 2,   # 4
-    "o":      1 << 3,   # 8
-}
 
-def ceio_to_int(permissions: List[str]) -> int:
-
-    mask = 0
-    for p in permissions:
-        bit = _CEIO_MAP.get(p.lower())
-        if bit:
-            mask |= bit
-    return mask
 
 class SapService:
     def __init__(self, db):
         self.db = db
+
+    def load_all_permissions(self) -> Dict[int, int]:
+        rows = self.db.query(SapORM).all()
+        return {row.badge_id: row.permissions for row in rows}
 
 
     def grant_permission(self, badge_id: int, permissions: List[str]):

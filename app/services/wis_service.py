@@ -29,8 +29,13 @@ class WorldInterfaceService:
         self.credential_service = credential_service
         self.sap_service = sap_service
 
-        self._load_available_connectors()
+        self.sap_matrix: Dict[str, int] = {} # badge_id -> [permissions]
 
+        self._load_available_connectors()
+        self._init_sap_matrix()
+
+    def _init_sap_matrix(self):
+        self.sap_matrix = self.sap_service.load_all_permissions()
 
     def _load_available_connectors(self):
         for finder, module_name, is_pkg in pkgutil.iter_modules(connectors_pkg.__path__):
@@ -102,5 +107,8 @@ class WorldInterfaceService:
             return {"error": "Badge ID and permissions are required."}
 
         # todo ::: check if badge_id is valid
-        self.sap_service.grant_permission(sap_perm.badge_id, sap_perm.ceio_permissions)
+        res = self.sap_service.grant_permission(sap_perm.badge_id, sap_perm.ceio_permissions)
+
+        self.sap_matrix[res.badge_id] = res.permissions
+
         return {"result": "sap saved"}
