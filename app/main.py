@@ -14,6 +14,7 @@ from app.services.credential_service import CredentialService
 from app.services.guard_service import GuardService
 from app.services.sap_service import SapService
 from app.services.wis_service import WorldInterfaceService
+from app.routers.badge_router import badge_router
 
 settings = Settings()
 
@@ -49,7 +50,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-from .routers.badge_router import badge_router
 
 app.include_router(badge_router, prefix="/badge", tags=[])
 app.include_router(connector_router, prefix="/connect", tags=[])
