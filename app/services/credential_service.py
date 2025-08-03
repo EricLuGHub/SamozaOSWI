@@ -17,6 +17,7 @@ class CredentialService:
                 .first())
 
     def add_credential(self, cred: CredentialDTO) -> CredentialORM:
+        # todo ::: make sure unique_id
         cred_orm = CredentialORM(**cred.model_dump()) # TODO ::: mapper maybe?
         self.db.add(cred_orm)
         self.db.commit()

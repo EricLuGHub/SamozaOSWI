@@ -11,7 +11,7 @@ class ComposioService:
         self.composio_toolset: ComposioToolSet = ComposioToolSet()
         self.credential_service = credential_service
 
-    def begin_add_connector(self, connector_name : str) -> str:
+    def begin_add_connector(self, connector_name : str) -> (str,str):
 
         new_user_id = str(uuid.uuid4())
         entity = self.composio_toolset.get_entity(id=new_user_id)
@@ -19,7 +19,7 @@ class ComposioService:
             app_name=connector_name,
             redirect_url=f"http://localhost:8211/connect/{new_user_id}/callback") # Todo ::: make this dynamic
 
-        return conn_req.redirectUrl
+        return conn_req.redirectUrl, new_user_id
 
     def finish_add_connector(
             self,

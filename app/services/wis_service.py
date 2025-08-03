@@ -1,6 +1,8 @@
 from typing import Dict, Any, Type
 from fastapi import BackgroundTasks
 
+from app.Constants.ActionPermissionMapper import ActionToPermissionMapper
+from app.Constants.Permissions import WisActions
 from app.DTO.sapDTO import SapDTO
 from app.connectors.BaseConnector import BaseConnector
 from app.connectors.requests.Connector.ConnectorAuthorizeRequest import ConnectorAuthorizeRequest
@@ -29,10 +31,15 @@ class WorldInterfaceService:
         self.credential_service = credential_service
         self.sap_service = sap_service
 
-        self.sap_matrix: Dict[str, int] = {} # badge_id -> [permissions]
+        self.sap_matrix: Dict[int, int] = {} # badge_id -> [permissions]
 
         self._load_available_connectors()
         self._init_sap_matrix()
+
+
+    def _has_permission(self, badge_id: int, required_permission: int) -> bool:
+        badge_mask = self.sap_matrix.get(badge_id, 0)
+        return bool(badge_mask & required_permission)
 
     def _init_sap_matrix(self):
         self.sap_matrix = self.sap_service.load_all_permissions()
@@ -48,14 +55,16 @@ class WorldInterfaceService:
 
     def auth_connector(self, req : ConnectorAuthorizeRequest):
 
+        if not self._has_permission(req.badge_id, WisActions.AUTH_CONNECTOR):
+            return {"error": "You do not have permission to add this connector."}
 
         # todo ::: check if user has permission to add connector
         if req.connector_name not in self.available_connectors:
             return None
 
-        redir = self.composio_service.begin_add_connector(req.connector_name)
+        reDir, user_id = self.composio_service.begin_add_connector(req.connector_name)
 
-        return {"redirect_url": redir}
+        return {"redirect_url": reDir, "user_id": user_id }
 
     async def handle_connector_callback(
             self,
@@ -75,10 +84,15 @@ class WorldInterfaceService:
 
     def connector_execute(self, req: ConnectorExecuteRequest):
 
-        hasAccess = self.guard.verify_permission(req.badge_id, req.action)
+        action_perm = ActionToPermissionMapper.get(req.action)
+        if action_perm is None:
+            return {"error": f"No CEIO mapping for action '{req.action}'"}
 
-        if not hasAccess:
+        required = WisActions.CONNECTOR_EXECUTE | action_perm
+
+        if not self._has_permission(req.badge_id, required):
             return {"error": "You do not have permission to execute this action."}
+
 
         creds = self.credential_service.get_credentials(req.user_id, req.connector_name)
 
@@ -96,12 +110,12 @@ class WorldInterfaceService:
             user_id=creds.user_id,
             connection_id=creds.connection_id
         )
-        # todo ::: remove this and replace by logic above
         new_connector.execute(req.action, req.payload)
-
-        return None
+        return {"result": "Action executed successfully."}
 
     def grant_ceio_permissions(self, sap_perm: SapDTO):
+        if not self._has_permission(sap_perm.master_badge_id, WisActions.GRANT_CEIO_PERMISSIONS):
+            return {"error": "You do not have permission to grant CEIO permissions."}
 
         if not sap_perm.badge_id or not sap_perm.ceio_permissions:
             return {"error": "Badge ID and permissions are required."}

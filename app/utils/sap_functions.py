@@ -15,3 +15,4 @@ def ceio_to_int(permissions: List[str]) -> int:
         if bit:
             mask |= bit
     return mask
+
