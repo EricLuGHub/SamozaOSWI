@@ -34,18 +34,18 @@ app = FastAPI(
 )
 
 
-app.include_router(creds_router, prefix="/connect", tags=[])
+app.include_router(creds_router, prefix="/credentials", tags=[])
 
 @app.get("/")
 async def root():
-    return {"message": "Hello"}
+    return {"message": "Hello from SEPS!"}
 
 if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
-        "app.main:app",
+        "seps_app.main:app",
         host=settings.host,
-        port=settings.port,
+        port=settings.port_seps,
         reload=True,
     )

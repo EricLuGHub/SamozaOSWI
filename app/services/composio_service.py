@@ -29,6 +29,8 @@ class ComposioService:
             status: str,
     ) -> bool:
 
+        # todo ::: move to creds service
+
         if status.lower() != "success":
             return False
         creds = CredentialDTO(

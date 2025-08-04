@@ -1,5 +1,4 @@
-from urllib.request import Request
-
+from fastapi import Request
 
 def get_composio_service(request: Request):
     return request.app.state.composio_service
