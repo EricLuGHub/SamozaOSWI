@@ -2,7 +2,7 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from seps_app.CredentialDTO import CredentialDTO
+from seps_app.DTO.credentialDTO import CredentialDTO
 from seps_app.credentialORM import CredentialORM
 
 

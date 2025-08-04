@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query
 
-from seps_app.CredentialDTO import CredentialDTO
+from seps_app.DTO.credentialDTO import CredentialDTO
 from seps_app.dependencies import get_composio_service, get_credential_service
 from seps_app.requests.addConnectorRequest import AddConnectorRequest
 from seps_app.requests.claimCredentialRequest import ClaimCredentialRequest
@@ -13,7 +13,7 @@ creds_router = APIRouter(prefix="", tags=[])
 async def add_credential(new_connector : AddConnectorRequest, svc: ComposioService = Depends(get_composio_service)):
     # todo::: check if connector name exists
     res  = svc.begin_add_connector(new_connector.connector_name)
-    return res
+    return {"redirect_url": res}
 
 
 @creds_router.get("/{user_id}/callback")
@@ -28,9 +28,8 @@ async def connector_callback(
         connection_id=connectedAccountId,
         user_id=user_id,
         service_name=appName.upper(),
-        access_token=None,
-        refresh_token=None,
     )
+    svc.add_credential(cred)
 
     return {"response": "success"}
 

@@ -2,7 +2,6 @@ import uuid
 from composio_llamaindex import ComposioToolSet, App
 
 from seps_app.services.credential_service import CredentialService
-from seps_app.CredentialDTO import CredentialDTO
 
 
 class ComposioService:
@@ -16,26 +15,6 @@ class ComposioService:
         entity = self.composio_toolset.get_entity(id=new_user_id)
         conn_req = entity.initiate_connection(
             app_name=connector_name,
-            redirect_url=f"http://localhost:8222/creds/{new_user_id}/callback") # Todo ::: make this dynamic
+            redirect_url=f"http://localhost:8222/credentials/{new_user_id}/callback") # Todo ::: make this dynamic
 
         return conn_req.redirectUrl
-
-    def finish_add_connector(
-            self,
-            user_id: str,
-            service_name: str,
-            connected_account_id: str,
-            status: str,
-    ) -> bool:
-
-        if status.lower() != "success":
-            return False
-        creds = CredentialDTO(
-            connection_id=connected_account_id,
-            user_id=user_id,
-            service_name=service_name.upper(),
-            access_token=None,
-            refresh_token=None,
-        )
-        self.credential_service.add_credential(creds)
-        return True
