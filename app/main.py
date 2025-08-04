@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from app.config import Settings
 from app.db import SQLALCHEMY_DATABASE_URL, SessionLocal, Base, engine
 from app.routers.connect_router import connector_router
+from app.routers.ephemeral_router import ephemeral_router
 from app.routers.sap_router import sap_router
 from app.services.badge_service import BadgeService
 from app.services.composio_service import ComposioService
@@ -52,6 +53,7 @@ app = FastAPI(
 app.include_router(badge_router, prefix="/badge", tags=[])
 app.include_router(connector_router, prefix="/connect", tags=[])
 app.include_router(sap_router, prefix="/sap", tags=[])
+app.include_router(ephemeral_router, prefix="/sap", tags=[])
 
 @app.get("/")
 async def root():
