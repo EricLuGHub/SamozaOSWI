@@ -1,9 +1,5 @@
 from fastapi import Request
 
-# return request.app.state.composio
-
-def get_guard_service(request: Request):
-    return None
 
 def get_wis_service(request: Request):
     return request.app.state.wis

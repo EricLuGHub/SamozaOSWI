@@ -2,14 +2,11 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.config import Settings
-from app.db import SQLALCHEMY_DATABASE_URL, SessionLocal, Base, engine
-from app.services.badge_service import BadgeService
-from app.services.composio_service import ComposioService
-from app.services.credential_service import CredentialService
-from app.services.guard_service import GuardService
-from app.services.sap_service import SapService
-from app.services.wis_service import WorldInterfaceService
+from seps_app.services.composio_service import ComposioService
+from seps_app.services.credential_service import CredentialService
+from seps_app.config import Settings
+from seps_app.db import Base, engine, SessionLocal
+from seps_app.creds_router import creds_router
 
 settings = Settings()
 
@@ -22,25 +19,17 @@ async def lifespan(app: FastAPI):
     app.state.db = db
 
     app.state.settings = settings
-    app.state.guard = GuardService()
     app.state.credential_service = CredentialService(db)
     app.state.composio_service = ComposioService(
         app.state.credential_service
     )
-    app.state.badge_service = BadgeService(db)
-    app.state.sap_service = SapService(db)
-
-    app.state.wis = WorldInterfaceService(app.state.guard,
-                                          app.state.composio_service,
-                                          app.state.credential_service,
-                                          app.state.sap_service)
 
     yield
 
     db.close()
 
 app = FastAPI(
-    title="SamozaOS World Interface",
+    title="Samoza Ephemeral Pool Service",
     lifespan=lifespan,
 )
 

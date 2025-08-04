@@ -1,8 +1,6 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
-from sqlalchemy.engine.create import create_engine
-from sqlalchemy.orm.session import sessionmaker
 
 from app.config import Settings
 from app.db import SQLALCHEMY_DATABASE_URL, SessionLocal, Base, engine
