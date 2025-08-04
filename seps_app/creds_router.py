@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query
 
 from seps_app.DTO.credentialDTO import CredentialDTO
 from seps_app.dependencies import get_composio_service, get_credential_service
+from seps_app.requests.ReleaseCredentialsRequest import ReleaseCredentialsRequest
 from seps_app.requests.addConnectorRequest import AddConnectorRequest
 from seps_app.requests.claimCredentialRequest import ClaimCredentialRequest
 from seps_app.services.composio_service import ComposioService
@@ -35,17 +36,19 @@ async def connector_callback(
 
 
 @creds_router.post("/claim-creds")
-async def claim_cred(new_badge : ClaimCredentialRequest, svc: CredentialService = Depends(get_credential_service)):
-    badge_id  = svc.claim_credentials(new_badge)
-    return {"badge_id": badge_id}
+async def claim_cred(req : ClaimCredentialRequest, svc: CredentialService = Depends(get_credential_service)):
+
+    res  = svc.claim_credentials(req.service_name)
+
+    return {"user_id": res.user_id, "connection_id": res.connection_id }
 
 
-@creds_router.get("/release")
+@creds_router.post("/release")
 async def release_cred(
-    user_id: str,
+    req: ReleaseCredentialsRequest,
     svc: CredentialService = Depends(get_credential_service),
 ):
-    res = svc.release_credentials(user_id)
+    res = svc.release_credentials(req.user_id)
     return {"response": "success" if res else "failure"}
 
 
