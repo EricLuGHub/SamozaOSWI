@@ -1,12 +1,14 @@
 from typing import Dict, Any, Type
-from fastapi import BackgroundTasks
+import requests
 
 from app.Constants.ActionPermissionMapper import ActionToPermissionMapper
 from app.Constants.Permissions import WisActions
+from app.DTO.credentialDTO import CredentialDTO
 from app.DTO.sapDTO import SapDTO
 from app.connectors.BaseConnector import BaseConnector
 from app.connectors.requests.Connector.ConnectorAuthorizeRequest import ConnectorAuthorizeRequest
 from app.connectors.requests.Connector.ConnectorExecuteRequest import ConnectorExecuteRequest
+from app.connectors.requests.Ephemeral.ephConnectorRequest import EphConnectorRequest
 from app.services.composio_service import ComposioService
 from app.services.credential_service import CredentialService
 from app.services.guard_service import GuardService
@@ -126,3 +128,36 @@ class WorldInterfaceService:
         self.sap_matrix[res.badge_id] = res.permissions
 
         return {"result": "sap saved"}
+
+    def req_eph_creds(self, eph_req: EphConnectorRequest) -> str:
+        resp = requests.post(
+            "http://localhost:8222/credentials/claim-creds",
+            json={"service_name": eph_req.service_name}
+        )
+        resp.raise_for_status()
+        payload = resp.json()
+        user_id = payload["user_id"]
+        connection_id = payload["connection_id"]
+
+        new_creds = CredentialDTO(
+            service_name=eph_req.service_name,
+            user_id=user_id,
+            connection_id=connection_id,
+            is_bot=True,
+        )
+
+        self.credential_service.add_credential(new_creds)
+
+        return user_id
+
+    def discord_eph_creds(self, eph_req: EphConnectorRequest) -> bool:
+
+        self.credential_service.delete_credential(eph_req.user_id)
+        resp = requests.post(
+            "http://localhost:8222/credentials/release",
+            json={"user_id": eph_req.user_id}
+        )
+
+        resp.raise_for_status()
+        payload = resp.json()
+        return payload.get("ok", False) == "ok"

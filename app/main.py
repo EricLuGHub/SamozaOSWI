@@ -53,7 +53,7 @@ app = FastAPI(
 app.include_router(badge_router, prefix="/badge", tags=[])
 app.include_router(connector_router, prefix="/connect", tags=[])
 app.include_router(sap_router, prefix="/sap", tags=[])
-app.include_router(ephemeral_router, prefix="/sap", tags=[])
+app.include_router(ephemeral_router, prefix="/ephemeral", tags=[])
 
 @app.get("/")
 async def root():

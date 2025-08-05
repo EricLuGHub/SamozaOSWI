@@ -24,14 +24,14 @@ class CredentialService:
         self.db.refresh(cred_orm)
         return cred_orm
 
-    def delete_credential(self, user_id, service_name) -> bool:
+    def delete_credential(self, user_id) -> bool:
         """
         Deletes a credential for a user.
         """
         cred = (
             self.db
             .query(CredentialORM)
-            .filter_by(user_id=user_id, service_name=service_name)
+            .filter_by(user_id=user_id)
             .first()
         )
         if not cred:
@@ -40,3 +40,4 @@ class CredentialService:
         self.db.delete(cred)
         self.db.commit()
         return True
+
