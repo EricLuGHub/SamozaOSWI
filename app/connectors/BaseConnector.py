@@ -9,8 +9,6 @@ class BaseConnector:
     connection_id: str
     composio_toolset: ComposioToolSet
 
-    # todo ::: base_composio
-
     def __init__(self, user_id: str, connection_id: str):
         self.user_id = user_id
         self.connection_id = connection_id

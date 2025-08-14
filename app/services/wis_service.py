@@ -6,12 +6,12 @@ from app.Constants.Permissions import WisActions
 from app.DTO.credentialDTO import CredentialDTO
 from app.DTO.sapDTO import SapDTO
 from app.connectors.BaseConnector import BaseConnector
+from app.connectors.ComposioConnector import ComposioConnector
 from app.connectors.requests.Connector.ConnectorAuthorizeRequest import ConnectorAuthorizeRequest
 from app.connectors.requests.Connector.ConnectorExecuteRequest import ConnectorExecuteRequest
 from app.connectors.requests.Ephemeral.ephConnectorRequest import EphConnectorRequest
 from app.services.composio_service import ComposioService
 from app.services.credential_service import CredentialService
-from app.services.guard_service import GuardService
 import app.connectors as connectors_pkg
 import importlib
 import pkgutil
@@ -22,14 +22,12 @@ from app.services.sap_service import SapService
 
 class WorldInterfaceService:
     def __init__(self,
-                 guard: GuardService,
                  composio_service: ComposioService,
                  credential_service: CredentialService,
                  sap_service: SapService):
 
-        self.guard = guard
         self.composio_service = composio_service
-        self.available_connectors: Dict[str, Type[BaseConnector]] = {} # todo ::: make this into a factory
+        self.available_connectors: Dict[str, Type[BaseConnector]] = {}
         self.credential_service = credential_service
         self.sap_service = sap_service
 
@@ -60,9 +58,8 @@ class WorldInterfaceService:
         if not self._has_permission(req.badge_id, WisActions.AUTH_CONNECTOR):
             return {"error": "You do not have permission to add this connector."}
 
-        # todo ::: check if user has permission to add connector
-        if req.connector_name not in self.available_connectors:
-            return None
+        # if req.connector_name not in self.available_connectors:
+        #     return None
 
         reDir, user_id = self.composio_service.begin_add_connector(req.connector_name)
 
@@ -108,12 +105,13 @@ class WorldInterfaceService:
         if not connector:
             return None
 
-        new_connector = connector(
+        new_connector = ComposioConnector(
             user_id=creds.user_id,
             connection_id=creds.connection_id
         )
-        new_connector.execute(req.action, req.payload)
-        return {"result": "Action executed successfully."}
+
+        res = new_connector.execute(req.action, req.payload)
+        return res
 
     def grant_ceio_permissions(self, sap_perm: SapDTO):
         if not self._has_permission(sap_perm.master_badge_id, WisActions.GRANT_CEIO_PERMISSIONS):
@@ -122,7 +120,9 @@ class WorldInterfaceService:
         if not sap_perm.badge_id or not sap_perm.ceio_permissions:
             return {"error": "Badge ID and permissions are required."}
 
-        # todo ::: check if badge_id is valid
+        if not self.badge_service.validate():
+            return {"error": "Invalid badge ID."}
+
         res = self.sap_service.grant_permission(sap_perm.badge_id, sap_perm.ceio_permissions)
 
         self.sap_matrix[res.badge_id] = res.permissions

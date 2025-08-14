@@ -40,8 +40,15 @@ class CredentialService:
         return True
 
     def add_credential(self, cred: CredentialDTO) -> CredentialORM:
-        # todo ::: make sure unique_id
-        cred_orm = CredentialORM(**cred.model_dump()) # TODO ::: mapper maybe?
+        existing = (
+            self.db.query(CredentialORM)
+            .filter_by(user_id=cred.user_id)
+            .first()
+        )
+        if existing:
+            return None
+
+        cred_orm = CredentialORM(**cred.model_dump())
         self.db.add(cred_orm)
         self.db.commit()
         self.db.refresh(cred_orm)

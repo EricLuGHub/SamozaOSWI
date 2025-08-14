@@ -12,7 +12,6 @@ creds_router = APIRouter(prefix="", tags=[])
 
 @creds_router.post("/add")
 async def add_credential(new_connector : AddConnectorRequest, svc: ComposioService = Depends(get_composio_service)):
-    # todo::: check if connector name exists
     res  = svc.begin_add_connector(new_connector.connector_name)
     return {"redirect_url": res}
 

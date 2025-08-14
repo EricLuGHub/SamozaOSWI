@@ -4,7 +4,7 @@ class CEIO(IntFlag):
     CREATE   = 1 << 0  # C -> 1
     EXECUTE  = 1 << 1  # E -> 2
     INGEST   = 1 << 2  # I -> 4
-    OBSERVE  = 1 << 3  # O -> 8
+    OUTPUT  = 1 << 3  # O -> 8
 
 class WisActions:
     AUTH_CONNECTOR               = CEIO.CREATE

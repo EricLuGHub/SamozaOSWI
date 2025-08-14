@@ -1,6 +1,7 @@
 import uuid
 from composio_llamaindex import ComposioToolSet, App
 
+from seps_app.db import SEPS_ENDPOINT
 from seps_app.services.credential_service import CredentialService
 
 
@@ -15,6 +16,6 @@ class ComposioService:
         entity = self.composio_toolset.get_entity(id=new_user_id)
         conn_req = entity.initiate_connection(
             app_name=connector_name,
-            redirect_url=f"http://localhost:8222/credentials/{new_user_id}/callback") # Todo ::: make this dynamic
+            redirect_url=f"{SEPS_ENDPOINT}/credentials/{new_user_id}/callback") # Todo ::: make this dynamic
 
         return conn_req.redirectUrl
