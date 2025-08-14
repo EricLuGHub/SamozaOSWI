@@ -98,13 +98,6 @@ class WorldInterfaceService:
         if not creds:
             return {"error": "No credentials found for this connector."}
 
-
-
-        connector = self.available_connectors.get(req.connector_name)
-
-        if not connector:
-            return None
-
         new_connector = ComposioConnector(
             user_id=creds.user_id,
             connection_id=creds.connection_id
